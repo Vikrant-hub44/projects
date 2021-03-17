@@ -1,0 +1,110 @@
+<div class="page">
+  <div class="breadcrumb-holder">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-9 mt-3">
+          <span class="dash">Add Evalution</span>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a routerLink="/rides">Manage Sessions</a></li>
+            <li class="breadcrumb-item"><a (click)="cancelForm()" style="cursor:pointer;">Load Session</a></li>
+            <li class="breadcrumb-item active">Add Evalution</li>
+          </ul>
+        </div>
+        <div class="col-md-3 mt-4 text-right">
+          <button class="w-auto sw-100 btn btn-dark" (click)="cancelForm()"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="dashboard-header section-padding">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="bg-white border rounded">
+            <div class="col-md-12 bg-light py-3">
+              <div class="row">
+                <div class="col-sm-12 col-xl-7">
+                  <label class="mb-0 pr-2"><b>Rider Name:</b> {{FirstName  +' '+ LastName}}</label>
+                  <label class="mb-0 pr-2"><b>Rider ID: </b>{{CurrentRiderId}} </label>
+                  <label class="mb-0 pr-2"><b>Date of Birth: </b>{{Dob| date : 'MMM dd, yyyy'}}</label>
+                  <label class="mb-0 pr-2"><b>Gender: </b> {{Gender}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="clear"></div>
+            <div class="col-md-12 mt-4 pb-4">
+              <div class="row mx-auto">
+                <div class="col-sm-12 col-md-12" [ngClass]="{'disabled':loading}">
+                  <form [formGroup]="evalutionRide">
+
+                    <div class="row">
+                      <div class="table-responsive">
+                        <table class="table mb-0">
+                          <thead class="thead-bg">
+                            <tr>
+                              <th>Angle</th>
+                              <th>Core Compartment</th>
+                              <th>Time (Seconds)</th>
+                            </tr>
+                          </thead>
+                          <tbody formArrayName="EvalutionRidesAngleList">
+                            <tr [formGroupName]="i" *ngFor="let field of EvalutionRidesAngleList.controls; let i=index">
+                              <td>
+                                <div *ngIf="i==0">
+                                  <select formControlName="Spin" class="form-control" (change)="onAngleChange($event)" [(ngModel)]='selectedEvaluationAnge'>
+                                    <option value="0">Select Angle</option>
+                                    <option *ngFor="let angle of SpinList">{{angle}}</option>
+                                  </select>
+                                  <small *ngIf="field.get('Spin').invalid && (field.get('Spin').dirty || field.get('Spin').touched) && field.get('Spin').errors?.required"
+                                         class="text-danger">Please select Angle</small>
+                                </div>
+                                <div *ngIf="i!==0" class="pl-5"><b>{{selectedEvaluationAnge}}</b></div>
+                              </td>
+                              <td>
+                                <span>{{field.get('Direction').value}}</span>
+                              </td>
+
+                              <td>
+                                <div class="form-group">
+                                  <input type="text" class="form-control" placeholder="Time (Seconds)" formControlName="Degree"  (keypress)="numberOnly($event)" maxlength="10"   (keyup)="calculateScoreValues($event,i)" 
+                                         [ngClass]="{'is-invalid': (field.get('Degree').invalid && (field.get('Degree').dirty || field.get('Degree').touched) && field.get('Degree').errors?.required) }">
+
+                                  <small *ngIf="field.get('Degree').invalid && (field.get('Degree').dirty || field.get('Degree').touched) && field.get('Degree').errors?.required"
+                                         class="text-danger">Please select Time (Seconds)</small>
+                                </div>  
+                              </td> 
+                            </tr>
+                          </tbody>  
+                        </table>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mb-2 pl-1">
+                      <label>Evaluation Score:<span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" placeholder="Evaluation Score" disabled formControlName="CoreScore" [ngClass]="{'is-invalid': (CoreScore.invalid && (CoreScore.dirty || CoreScore.touched) && (CoreScore.errors?.required)) }">
+                      <small *ngIf="CoreScore.invalid && (CoreScore.dirty || CoreScore.touched) && CoreScore.errors?.required"
+                             class="text-danger">Please select Evaluation Score</small>
+
+                    </div>
+                      <div class="col-md-12">
+                        <button type="submit" (click)="SaveRide()" class="btn btn-success form-btns"><i class="fa fa-play"></i>Save</button>
+
+                        <div class="clearfix"></div>
+                      </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--white-main-div-->
+        </div>
+      </div>
+    </div>
+    <!----------end-form-------->
+    <!--white-main-div-->
+  </section>
+  <app-footer></app-footer>
+  <app-loader [size]=60 [color]="'white'" *ngIf="loading" class="loader"></app-loader>
+
+</div>
